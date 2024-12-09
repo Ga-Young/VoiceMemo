@@ -10,19 +10,25 @@ import SwiftUI
 struct OnboardingView: View {
     @StateObject private var onboardingViewModel = OnboardingViewModel()
     @StateObject private var path = PathModel()
+    @StateObject private var todoListViewModel = TodoListViewModel()
     
     var body: some View {
         //todo로 이동
         NavigationStack(path: $path.paths) {
-            OnboardingContentView(onboardingViewModel: onboardingViewModel)
+//            OnboardingContentView(onboardingViewModel: onboardingViewModel)
+            TodoListView()
+                .environmentObject(todoListViewModel)
                 .navigationDestination(for: PathType.self) { pathType in
                     switch pathType {
                     case .homeView:
                         ContentView()
-//                            .navigationBarBackButtonHidden(true)
-                    case .todoView:
-                        ContentView()
                             .navigationBarBackButtonHidden(true)
+                        
+                    case .todoView:
+                        TodoView()
+                            .navigationBarBackButtonHidden(true)
+                            .environmentObject(todoListViewModel)
+                        
                     case .memoView:
                         ContentView()
                             .navigationBarBackButtonHidden(true)
