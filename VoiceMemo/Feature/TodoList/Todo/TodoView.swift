@@ -23,8 +23,10 @@ struct TodoView: View {
                         .init(title: todoViewModel.title,
                               time: todoViewModel.time,
                               day: todoViewModel.day,
-                              isSelected: false)
+                              isSelected: false
+                             )
                     )
+                    pathModel.paths.removeLast()
                 },
                 rightButtonType: .create
             )
