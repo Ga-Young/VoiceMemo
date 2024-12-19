@@ -131,7 +131,8 @@ private struct MemoCellView: View {
     
     fileprivate var body: some View {
         Button {
-            //path 구현해야함
+            pathModel.paths.append(.memoView(isCreateMode: false, memo: memo))
+            
         } label: {
             VStack(spacing: 10) {
                 HStack {
@@ -154,7 +155,7 @@ private struct MemoCellView: View {
                             memoListViewModel.memoRemoveSelectedBoxTapped(memo)
                             
                         } label: {
-                            isRemoveSelected ? Image("check_empty") : Image("check_fill")
+                            isRemoveSelected ? Image("check_fill") : Image("check_empty")
                         }
                     }
                 }
@@ -170,7 +171,7 @@ private struct MemoCellView: View {
 }
 
 private struct WriteMemoButtonView: View {
-    @EnvironmentObject var memoListViewModel: MemoListViewModel
+    @EnvironmentObject private var pathModel: PathModel
     
     fileprivate var body: some View {
         VStack {
@@ -180,7 +181,8 @@ private struct WriteMemoButtonView: View {
                 Spacer()
                 
                 Button {
-                    //Todo - 메모 뷰 구현 후 작성
+                    pathModel.paths.append(.memoView(isCreateMode: true, memo: nil))
+                    
                 } label: {
                     Image("write_btn")
                 }
