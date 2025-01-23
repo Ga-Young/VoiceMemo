@@ -17,7 +17,7 @@ struct OnboardingView: View {
         //todo로 이동
         NavigationStack(path: $path.paths) {
 //            OnboardingContentView(onboardingViewModel: onboardingViewModel)
-            VoiceRecorderView()
+            TimerView()
                 .environmentObject(memoListViewModel)
                 .navigationDestination(for: PathType.self) { pathType in
                     switch pathType {
