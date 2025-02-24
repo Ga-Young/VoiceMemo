@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct SettingView: View {
+    @EnvironmentObject private var homeViewModel: HomeViewModel
+    
     var body: some View {
         VStack {
             TitleView()
@@ -43,21 +45,23 @@ private struct TitleView: View {
 }
 
 private struct TotalTapCountView: View {
+    @EnvironmentObject private var homeViewModel: HomeViewModel
+    
     fileprivate var body: some View {
         HStack {
             Spacer()
             
-            TabCountView(title: "To do", count: 1)
+            TabCountView(title: "To do", count: homeViewModel.todosCount)
             
             Spacer()
                 .frame(width: 70)
             
-            TabCountView(title: "메모", count: 2)
+            TabCountView(title: "메모", count: homeViewModel.memosCount)
              
             Spacer()
                 .frame(width: 70)
             
-            TabCountView(title: "음성메모", count: 3)
+            TabCountView(title: "음성메모", count: homeViewModel.voiceRecordersCount)
             
             Spacer()
         }
@@ -90,6 +94,8 @@ private struct TabCountView: View {
 }
 
 private struct TotalTabMoveView: View {
+    @EnvironmentObject private var homeViewModel: HomeViewModel
+    
     fileprivate var body: some View {
         VStack {
             Rectangle()
@@ -97,19 +103,19 @@ private struct TotalTabMoveView: View {
                 .frame(height: 1)
             
             TabMoveView(title: "To do List") {
-
+                homeViewModel.changeSelectedTab(.todoList)
             }
             
             TabMoveView(title: "메모장") {
-                
+                homeViewModel.changeSelectedTab(.memo)
             }
             
             TabMoveView(title: "음성메모") {
-                
+                homeViewModel.changeSelectedTab(.voiceRecorder)
             }
             
             TabMoveView(title: "타이머") {
-                
+                homeViewModel.changeSelectedTab(.timer)
             }
             
             Rectangle()
@@ -133,7 +139,7 @@ private struct TabMoveView: View {
     
     fileprivate var body: some View {
         Button {
-//            tabAction
+            tabAction()
             
         } label: {
             HStack {
@@ -152,4 +158,5 @@ private struct TabMoveView: View {
 
 #Preview {
     SettingView()
+        .environmentObject(HomeViewModel())
 }

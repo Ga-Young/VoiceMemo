@@ -8,43 +8,50 @@
 import SwiftUI
 
 struct VoiceRecorderView: View {
-  @StateObject private var voiceRecorderViewModel = VoiceRecorderViewModel()
+    @StateObject private var voiceRecorderViewModel = VoiceRecorderViewModel()
+    @EnvironmentObject private var homeViewModel: HomeViewModel
   
-  var body: some View {
-    ZStack {
-      VStack {
-        TitleView()
-        
-        if voiceRecorderViewModel.recordedFiles.isEmpty {
-          AnnouncementView()
-        } else {
-          VoiceRecorderListView(voiceRecorderViewModel: voiceRecorderViewModel)
-            .padding(.top, 15)
+    var body: some View {
+      ZStack {
+        VStack {
+          TitleView()
+    
+          if voiceRecorderViewModel.recordedFiles.isEmpty {
+            AnnouncementView()
+          } else {
+            VoiceRecorderListView(voiceRecorderViewModel: voiceRecorderViewModel)
+              .padding(.top, 15)
+          }
+    
+          Spacer()
         }
-        
-        Spacer()
+    
+        RecordBtnView(voiceRecorderViewModel: voiceRecorderViewModel)
+          .padding(.trailing, 20)
+          .padding(.bottom, 50)
       }
-      
-      RecordBtnView(voiceRecorderViewModel: voiceRecorderViewModel)
-        .padding(.trailing, 20)
-        .padding(.bottom, 50)
-    }
-    .alert(
-      "선택된 음성메모를 삭제하시겠습니까?",
-      isPresented: $voiceRecorderViewModel.isDisplayRemoveVoiceRecorderAlert
-    ) {
-      Button("삭제", role: .destructive) {
-        voiceRecorderViewModel.removeSelectedVoiceRecord()
+      .alert(
+        "선택된 음성메모를 삭제하시겠습니까?",
+        isPresented: $voiceRecorderViewModel.isDisplayRemoveVoiceRecorderAlert
+      ) {
+        Button("삭제", role: .destructive) {
+          voiceRecorderViewModel.removeSelectedVoiceRecord()
+        }
+        Button("취소", role: .cancel) { }
       }
-      Button("취소", role: .cancel) { }
+      .alert(
+        voiceRecorderViewModel.alertMessage,
+        isPresented: $voiceRecorderViewModel.isDisplayAlert
+      ) {
+        Button("확인", role: .cancel) { }
+      }
+      .onChange(
+        of: voiceRecorderViewModel.recordedFiles,
+        perform: { recordedFiles in
+            homeViewModel.setVoiceRecordersCount(recordedFiles.count)
+        }
+      )
     }
-    .alert(
-      voiceRecorderViewModel.alertMessage,
-      isPresented: $voiceRecorderViewModel.isDisplayAlert
-    ) {
-      Button("확인", role: .cancel) { }
-    }
-  }
 }
 
 private struct TitleView: View {

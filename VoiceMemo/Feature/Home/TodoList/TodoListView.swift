@@ -10,13 +10,13 @@ import SwiftUI
 struct TodoListView: View {
     @EnvironmentObject private var pathModel: PathModel
     @EnvironmentObject private var todoListViewModel: TodoListViewModel
+    @EnvironmentObject private var homeViewModel: HomeViewModel
     
     var body: some View {
         ZStack {
             VStack {
-                if todoListViewModel.getTodosCount() == 0 {
+                if todoListViewModel.getTodosCount() != 0 {
                     CustomNavigationBar(isDisplayLeftButton: false,
-                                        isDisplayRightButton: false,
                                         rightButtonAction: todoListViewModel.navigationBarRightButtonTapped,
                                         rightButtonType: todoListViewModel.navigationBarRightButtonMode)
                 } else {
@@ -47,6 +47,12 @@ struct TodoListView: View {
             }
             Button("취소", role: .cancel) {}
         }
+        .onChange(
+            of: todoListViewModel.todos,
+            perform: { todos in
+                homeViewModel.setTodosCount(todos.count)
+            }
+        )
     }
 }
 
@@ -102,7 +108,7 @@ private struct TodoListContentView: View {
             ScrollView {
                 VStack(spacing: 0) {
                     Rectangle()
-                        .background(.customGray0)
+                        .fill(.customGray0)
                         .frame(height: 1)
                     
                     ForEach(todoListViewModel.todos, id: \.self) { todo in
@@ -135,7 +141,7 @@ private struct TodoCellView: View {
                         todoListViewModel.selectedBoxTapped(todo)
                         
                     } label: {
-                        todo.isSelected ? Image("todo_selected") : Image("todo_unselected")
+                        todo.isSelected ? Image("check_fill") : Image("check_empty")
                     }
                 }
                 
@@ -157,7 +163,7 @@ private struct TodoCellView: View {
                         todoListViewModel.todoRemoveSelectedBoxTapped(todo)
                         
                     } label: {
-                        isRemoveSelected ? Image("todo_selected") : Image("todo_unselected")
+                        isRemoveSelected ? Image("check_fill") : Image("check_empty")
                     }
                 }
             }
