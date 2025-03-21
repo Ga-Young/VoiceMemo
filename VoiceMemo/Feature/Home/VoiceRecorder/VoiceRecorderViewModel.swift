@@ -121,6 +121,16 @@ extension VoiceRecorderViewModel {
   }
   
   private func startRecording() {
+    do {
+        let session = AVAudioSession.sharedInstance()
+        try session.setCategory(.playAndRecord, mode: .default, options: [.defaultToSpeaker])
+        try session.setActive(true)
+          
+    } catch {
+        displayAlert(message: "오디오 세션 설정 중 오류가 발생했습니다: \(error.localizedDescription)")
+        return
+    }
+      
     let fileURL = getDocumentsDirectory().appendingPathComponent("새로운 녹음 \(recordedFiles.count + 1)")
     let settings = [
       AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
@@ -140,26 +150,9 @@ extension VoiceRecorderViewModel {
   }
   
   private func stopRecording() {
-//    audioRecorder?.stop()
-//    self.recordedFiles.append(self.audioRecorder!.url)
-//    self.isRecording = false
       audioRecorder?.stop()
+      self.recordedFiles.append(self.audioRecorder!.url)
       self.isRecording = false
-
-      DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {  // 0.5초 지연 추가
-          if let recordedURL = self.audioRecorder?.url {
-              self.recordedFiles.append(recordedURL)
-//              self.selectedRecoredFile = recordedURL
-              
-              let (_, duration) = self.getFileInfo(for: recordedURL)
-              if let duration = duration, duration > 0 {
-                  self.playedTime = duration
-                  
-              } else {
-                  self.displayAlert(message: "오디오 파일의 재생 시간을 가져오지 못했습니다.")
-              }
-          }
-      }
   }
   
   private func getDocumentsDirectory() -> URL {
@@ -227,7 +220,7 @@ extension VoiceRecorderViewModel {
       var duration: TimeInterval?
 
       do {
-          let fileAttributes = try fileManager.attributesOfItem(atPath: url.path())
+          let fileAttributes = try fileManager.attributesOfItem(atPath: url.path)
           creationDate = fileAttributes[.creationDate] as? Date
           
       } catch {
