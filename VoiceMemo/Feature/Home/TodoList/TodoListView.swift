@@ -13,32 +13,29 @@ struct TodoListView: View {
     @EnvironmentObject private var homeViewModel: HomeViewModel
     
     var body: some View {
-        ZStack {
-            VStack {
-                if todoListViewModel.getTodosCount() != 0 {
-                    CustomNavigationBar(isDisplayLeftButton: false,
-                                        rightButtonAction: todoListViewModel.navigationBarRightButtonTapped,
-                                        rightButtonType: todoListViewModel.navigationBarRightButtonMode)
-                } else {
-                    Spacer()
-                        .frame(height: 30)
-                }
-                
-                TitleView()
-                    .padding(.top, 20)
-                
-                if todoListViewModel.getTodosCount() == 0 {
-                    AnnouncementView()
-                    
-                } else {
-                    TodoListContentView()
-                        .padding(.top, 20)
-                }
+        VStack {
+            if todoListViewModel.getTodosCount() != 0 {
+                CustomNavigationBar(isDisplayLeftButton: false,
+                                    rightButtonAction: todoListViewModel.navigationBarRightButtonTapped,
+                                    rightButtonType: todoListViewModel.navigationBarRightButtonMode)
+            } else {
+                Spacer()
+                    .frame(height: 30)
             }
             
-            WriteTodoButtonView()
-                .padding(.trailing, 20)
-                .padding(.bottom, 50)
+            TitleView()
+                .padding(.top, 20)
+            
+            if todoListViewModel.getTodosCount() == 0 {
+                AnnouncementView()
+                
+            } else {
+                TodoListContentView()
+                    .padding(.top, 20)
+            }
+        }
+        .writeBtn {
+            pathModel.paths.append(.todoView)
         }
         .alert("To do List \(todoListViewModel.removeTodoCount)개 삭제하시겠습니까?",
                isPresented: $todoListViewModel.isDisplayRemoveAlert) {
@@ -177,26 +174,26 @@ private struct TodoCellView: View {
     }
 }
 
-private struct WriteTodoButtonView: View {
-    @EnvironmentObject private var pathModel: PathModel
-    
-    fileprivate var body: some View {
-        VStack {
-            Spacer()
-            
-            HStack {
-                Spacer()
-                
-                Button {
-                    pathModel.paths.append(.todoView)
-                    
-                } label: {
-                    Image("write_btn")
-                }
-            }
-        }
-    }
-}
+//private struct WriteTodoButtonView: View {
+//    @EnvironmentObject private var pathModel: PathModel
+//    
+//    fileprivate var body: some View {
+//        VStack {
+//            Spacer()
+//            
+//            HStack {
+//                Spacer()
+//                
+//                Button {
+//                    pathModel.paths.append(.todoView)
+//                    
+//                } label: {
+//                    Image("write_btn")
+//                }
+//            }
+//        }
+//    }
+//}
 #Preview {
     TodoListView()
         .environmentObject(PathModel())
